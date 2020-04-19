@@ -9,7 +9,7 @@
 
 C:/Users/micha/Desktop/Java programming/agh-mwo-enroller-rest/src/main/resources/hibernate.cfg.xml</remarks>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:enroller.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\micha\Desktop\Java programming\agh-mwo-enroller-rest\enroller.db</jdbc-url>
     </data-source>
   </component>
 </project>
