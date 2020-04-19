@@ -1,6 +1,8 @@
 package com.company.enroller.controllers;
 
+import com.company.enroller.model.Meeting;
 import com.company.enroller.model.Participant;
+import com.company.enroller.persistence.MeetingService;
 import com.company.enroller.persistence.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,23 +16,23 @@ import java.util.Collection;
 public class MeetingRestController {
 
     @Autowired
-    ParticipantService meetingService;
+    MeetingService meetingService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<?> getParticipants() {
-        Collection<Participant> participants = meetingService.getAll();
-        return new ResponseEntity<Collection<Participant>>(participants, HttpStatus.OK);
+    public ResponseEntity<?> getMeetings() {
+        Collection<Meeting> meetings = meetingService.getAll();
+        return new ResponseEntity<Collection<Meeting>>(meetings, HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getMeeting(@PathVariable("id") String login) {
-        Participant participant = meetingService.findByLogin(login);
-        if (participant == null) {
+    public ResponseEntity<?> getMeeting(@PathVariable("id") long id) {
+        Meeting meeting = meetingService.findById(id);
+        if (meeting == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<Participant>(participant, HttpStatus.OK);
+        return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
 
     }
 }
