@@ -31,4 +31,24 @@ public class MeetingService {
 		return (Meeting) this.session.get(Meeting.class, id);
 	}
 
+	public Meeting findByTitle(String title){
+		return (Meeting) this.session.get(Meeting.class, title);
+	}
+
+	public Meeting add(Meeting meeting){
+		Transaction transaction = this.session.beginTransaction();
+		session.save(meeting);
+		transaction.commit();
+		return meeting;
+	}
+
+
+	public Meeting delete(Meeting meeting){
+		Transaction transaction = this.session.beginTransaction();
+		session.delete(meeting);
+		transaction.commit();
+		return meeting;
+	}
+
+
 }

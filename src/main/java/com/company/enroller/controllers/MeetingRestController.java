@@ -7,11 +7,9 @@ import com.company.enroller.persistence.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.Id;
 import java.util.Collection;
 
 @RestController
@@ -38,4 +36,30 @@ public class MeetingRestController {
         return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
 
     }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ResponseEntity<?> add(@RequestBody Meeting meeting){
+//        Meeting foundMeetingTitle = meetingService.findByTitle(meeting.getTitle());
+//        if(foundMeetingTitle != null){
+//            return new ResponseEntity("cannot create requested Meeting ID " + meeting.getTitle() + " , because it's already exists! ", HttpStatus.CONFLICT);
+//        }
+
+        meetingService.add(meeting);
+        return new ResponseEntity<Meeting>(meeting, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> delete(@PathVariable("id") Long id){
+        Meeting meeting = meetingService.findById(id);
+//        Meeting foundMeetingTitle = meetingService.findByTitle(meeting.getTitle());
+//        if(foundMeetingTitle != null){
+//            return new ResponseEntity("cannot create requested Meeting ID " + meeting.getTitle() + " , because it's already exists! ", HttpStatus.CONFLICT);
+//        }
+
+        meetingService.delete(meeting);
+        return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
+    }
+
+
+
 }
