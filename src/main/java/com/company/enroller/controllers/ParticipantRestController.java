@@ -30,7 +30,6 @@ public class ParticipantRestController {
 		if (participant == null) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
 		}
-
 		return new ResponseEntity<Participant>(participant, HttpStatus.OK);
 	}
 
@@ -41,7 +40,6 @@ public class ParticipantRestController {
 		if (foundParticipant != null) {
 			return new ResponseEntity("Unable to create. A participant with login " + participant.getLogin() + " already exist.", HttpStatus.CONFLICT);
 		}
-
 		participantService.add(participant);
 		return  new ResponseEntity<Participant>(participant, HttpStatus.CREATED);
 	}
@@ -52,13 +50,7 @@ public class ParticipantRestController {
 		if (participant == null) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
 		}
-
 		participantService.delete(participant);
 		return new ResponseEntity<Participant>(participant, HttpStatus.OK);
-		//return new ResponseEntity<Pa>()
 	}
-
-
-
-
 }

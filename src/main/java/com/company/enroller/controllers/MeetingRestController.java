@@ -3,6 +3,7 @@ package com.company.enroller.controllers;
 import com.company.enroller.model.Meeting;
 import com.company.enroller.model.Participant;
 import com.company.enroller.persistence.MeetingService;
+import com.company.enroller.persistence.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,8 @@ public class MeetingRestController {
     @Autowired
     MeetingService meetingService;
 
-    Participant participant;
+    @Autowired
+    ParticipantService participantService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getMeetings() {
@@ -34,18 +36,11 @@ public class MeetingRestController {
         if (meeting == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
-
         return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
-
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> add(@RequestBody Meeting meeting){
-//        Meeting foundMeetingTitle = meetingService.findByTitle(meeting.getTitle());
-//        if(foundMeetingTitle != null){
-//            return new ResponseEntity("cannot create requested Meeting ID " + meeting.getTitle() + " , because it's already exists! ", HttpStatus.CONFLICT);
-//        }
-
         meetingService.add(meeting);
         return new ResponseEntity<Meeting>(meeting, HttpStatus.CREATED);
     }
@@ -56,50 +51,42 @@ public class MeetingRestController {
         if (meeting == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
-
         meetingService.delete(meeting);
         return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/participants", method = RequestMethod.GET)
     public ResponseEntity<?> getParticipants(@PathVariable("id") Long id){
-
         Meeting meeting = meetingService.findById(id);
-
         Collection<Participant> participants = meeting.getParticipants();
-//        Participant p1 = new Participant();
-//        Participant p2 = new Participant();
-//        participants.add(p1);
-//        participants.add(p2);
         return new ResponseEntity<Collection<Participant>>(participants, HttpStatus.OK);
-
     }
 
 
-    @RequestMapping(value = "/{id}/participants", method = RequestMethod.POST)
-    public ResponseEntity<?> addParticipant(@RequestBody Participant participant, @PathVariable("id") Long id){
+    @RequestMapping(value = "{id}/participants", method = RequestMethod.POST)
+    public ResponseEntity<?> addParticipant(@PathVariable("id") long id, @RequestBody Map<String, String> json) {
 
+        Meeting currentMeeting = meetingService.findById(id);
+        String login = json.get("login");
+        if (login == null) {
+            return new ResponseEntity<String>("Unable to find participant login in the request body",
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        Participant participantToAdd = participantService.findByLogin(login);
+        currentMeeting.addParticipant(participantToAdd);
+        meetingService.update(currentMeeting);
+
+        return new ResponseEntity<Collection<Participant>>(currentMeeting.getParticipants(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "{id}/participants/{login}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> removeParticipant(@PathVariable("id") long id, @PathVariable("login") String login) {
         Meeting meeting = meetingService.findById(id);
-
-        //participant = new Participant();
-
-        meeting.addParticipant(participant);
-        return new ResponseEntity<Participant>(participant, HttpStatus.CREATED);
+        Participant participant = participantService.findByLogin(login);
+        meeting.removeParticipant(participant);
+        meetingService.update(meeting);
+        return new ResponseEntity<Collection<Participant>>(meeting.getParticipants(), HttpStatus.OK);
     }
-
-
-//    @RequestMapping(value = "/{id}/participants", method = RequestMethod.DELETE)
-//    public ResponseEntity<?> addParticipant(@PathVariable("id") Long id, @RequestBody Participant participant){
-//
-//        Meeting meeting = meetingService.findById(id);
-//
-//
-//        //String delete = participant.getLogin();
-//
-//        meeting.removeParticipant(participant);
-//        return new ResponseEntity<Participant>(participant, HttpStatus.CREATED);
-//    }
-
-
 
 }

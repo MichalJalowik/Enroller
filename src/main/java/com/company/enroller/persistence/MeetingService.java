@@ -48,5 +48,11 @@ public class MeetingService {
 		return meeting;
 	}
 
+	public void update(Meeting meeting) {
+		Transaction transaction = this.session.beginTransaction();
+		this.session.merge(meeting);
+		transaction.commit();
+	}
+
 
 }
