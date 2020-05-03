@@ -63,7 +63,7 @@ public class MeetingRestController {
     }
 
 
-    @RequestMapping(value = "{id}/participants", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/participants", method = RequestMethod.POST)
     public ResponseEntity<?> addParticipant(@PathVariable("id") long id, @RequestBody Map<String, String> json) {
 
         Meeting currentMeeting = meetingService.findById(id);
@@ -80,13 +80,25 @@ public class MeetingRestController {
         return new ResponseEntity<Collection<Participant>>(currentMeeting.getParticipants(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "{id}/participants/{login}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}/participants/{login}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeParticipant(@PathVariable("id") long id, @PathVariable("login") String login) {
         Meeting meeting = meetingService.findById(id);
         Participant participant = participantService.findByLogin(login);
         meeting.removeParticipant(participant);
         meetingService.update(meeting);
         return new ResponseEntity<Collection<Participant>>(meeting.getParticipants(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public  ResponseEntity<?> updateMeeting(@PathVariable("id") long id, @RequestBody Meeting UMeeting){
+
+        Meeting meetingToBeUpdated = meetingService.findById(id);
+//        meetingService.delete(meetingToBeUpdated);
+//        meetingService.add(UMeeting);
+        UMeeting.setId(meetingToBeUpdated.getId());
+        meetingService.update(UMeeting);
+
+        return new ResponseEntity<Meeting>(UMeeting, HttpStatus.OK);
     }
 
 }
